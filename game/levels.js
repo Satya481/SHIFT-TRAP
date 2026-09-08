@@ -2,303 +2,153 @@ export const LEVELS = [
   {
     id: 1,
     name: "LEARN",
-    difficulty: 1,
-
-    player: {
-      x: 60,
-      y: 420,
-      width: 28,
-      height: 28,
-    },
-
-    exit: {
-      x: 900,
-      y: 420,
-      width: 35,
-      height: 60,
-    },
-
+    difficulty: 8,
+    player: { x: 55, y: 420, width: 28, height: 28 },
+    exit: { x: 945, y: 420, width: 35, height: 60 },
+    mechanics: { falseSafe: true, hiddenTrigger: 115, aiDelay: 85, maxAI: 6 },
     platforms: [
       { x: 0, y: 480, width: 1000, height: 40 },
-      { x: 170, y: 400, width: 130, height: 20 },
-      { x: 370, y: 350, width: 130, height: 20 },
-      { x: 570, y: 400, width: 130, height: 20 },
-      { x: 760, y: 350, width: 130, height: 20 },
+      { x: 120, y: 410, width: 92, height: 20 },
+      { x: 255, y: 355, width: 90, height: 20 },
+      { x: 390, y: 410, width: 85, height: 20 },
+      { x: 520, y: 345, width: 90, height: 20 },
+      { x: 660, y: 400, width: 82, height: 20 },
+      { x: 800, y: 335, width: 85, height: 20 },
     ],
-
     obstacles: [
-      {
-        x: 320,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
-      {
-        x: 710,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
+      { x: 210, y: 440, width: 44, height: 40, type: "spike", hidden: true },
+      { x: 345, y: 440, width: 44, height: 40, type: "spike", hidden: true },
+      { x: 475, y: 440, width: 44, height: 40, type: "spike", hidden: true },
+      { x: 610, y: 440, width: 44, height: 40, type: "spike", hidden: true },
+      { x: 748, y: 440, width: 44, height: 40, type: "spike", hidden: true },
+      { x: 888, y: 440, width: 44, height: 40, type: "spike", hidden: true },
     ],
   },
-
   {
     id: 2,
     name: "SHIFT",
-    difficulty: 2,
-
-    player: {
-      x: 60,
-      y: 420,
-      width: 28,
-      height: 28,
-    },
-
-    exit: {
-      x: 900,
-      y: 420,
-      width: 35,
-      height: 60,
-    },
-
+    difficulty: 9,
+    player: { x: 45, y: 420, width: 28, height: 28 },
+    exit: { x: 945, y: 420, width: 35, height: 60 },
+    mechanics: { shifting: true, aiDelay: 62, maxAI: 10 },
     platforms: [
-      { x: 0, y: 480, width: 1000, height: 40 },
-
-      {
-        x: 150,
-        y: 400,
-        width: 120,
-        height: 20,
-        moving: true,
-        minX: 120,
-        maxX: 330,
-        speed: 2,
-      },
-
-      {
-        x: 400,
-        y: 340,
-        width: 120,
-        height: 20,
-        moving: true,
-        minX: 350,
-        maxX: 620,
-        speed: 2.5,
-      },
-
-      {
-        x: 700,
-        y: 390,
-        width: 140,
-        height: 20,
-      },
+      { x: 0, y: 480, width: 120, height: 40 },
+      { x: 145, y: 405, width: 90, height: 20, moving: true, minX: 105, maxX: 300, speed: 3.4 },
+      { x: 320, y: 340, width: 78, height: 20, moving: true, minX: 285, maxX: 500, speed: 4.1 },
+      { x: 520, y: 405, width: 82, height: 20, moving: true, minX: 470, maxX: 690, speed: 3.8 },
+      { x: 710, y: 330, width: 78, height: 20, moving: true, minX: 670, maxX: 870, speed: 4.4 },
+      { x: 885, y: 405, width: 115, height: 20 },
     ],
-
     obstacles: [
-      {
-        x: 330,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
-
-      {
-        x: 620,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
+      { x: 105, y: 440, width: 42, height: 40, type: "spike" },
+      { x: 285, y: 440, width: 42, height: 40, type: "spike" },
+      { x: 495, y: 440, width: 42, height: 40, type: "spike" },
+      { x: 685, y: 440, width: 42, height: 40, type: "spike" },
+      { x: 860, y: 440, width: 42, height: 40, type: "spike" },
     ],
   },
-
   {
     id: 3,
     name: "BAIT",
-    difficulty: 3,
-
-    player: {
-      x: 60,
-      y: 420,
-      width: 28,
-      height: 28,
-    },
-
-    exit: {
-      x: 900,
-      y: 420,
-      width: 35,
-      height: 60,
-    },
-
+    difficulty: 9,
+    player: { x: 45, y: 420, width: 28, height: 28 },
+    exit: { x: 945, y: 420, width: 35, height: 60 },
+    mechanics: { deception: true, hiddenTrigger: 145, aiDelay: 48, maxAI: 13 },
     platforms: [
       { x: 0, y: 480, width: 1000, height: 40 },
-
-      { x: 140, y: 400, width: 130, height: 20 },
-      { x: 330, y: 350, width: 130, height: 20 },
-      { x: 520, y: 400, width: 130, height: 20 },
-      { x: 710, y: 350, width: 130, height: 20 },
+      { x: 110, y: 400, width: 110, height: 20 },
+      { x: 270, y: 335, width: 105, height: 20 },
+      { x: 425, y: 400, width: 105, height: 20 },
+      { x: 580, y: 325, width: 105, height: 20 },
+      { x: 735, y: 395, width: 100, height: 20 },
+      { x: 870, y: 335, width: 95, height: 20 },
     ],
-
     obstacles: [
-      {
-        x: 270,
-        y: 440,
-        width: 45,
-        height: 40,
-        type: "spike",
-        hidden: true,
-      },
-
-      {
-        x: 465,
-        y: 440,
-        width: 45,
-        height: 40,
-        type: "spike",
-        hidden: true,
-      },
-
-      {
-        x: 655,
-        y: 440,
-        width: 45,
-        height: 40,
-        type: "spike",
-        hidden: true,
-      },
+      { x: 205, y: 440, width: 48, height: 40, type: "spike", hidden: true },
+      { x: 365, y: 440, width: 48, height: 40, type: "spike", hidden: true },
+      { x: 520, y: 440, width: 48, height: 40, type: "spike", hidden: true },
+      { x: 675, y: 440, width: 48, height: 40, type: "spike", hidden: true },
+      { x: 830, y: 440, width: 48, height: 40, type: "spike", hidden: true },
     ],
   },
-
   {
     id: 4,
     name: "REVERSE",
-    difficulty: 4,
-
-    player: {
-      x: 60,
-      y: 420,
-      width: 28,
-      height: 28,
-    },
-
-    exit: {
-      x: 900,
-      y: 420,
-      width: 35,
-      height: 60,
-    },
-
+    difficulty: 10,
+    player: { x: 45, y: 420, width: 28, height: 28 },
+    exit: { x: 945, y: 420, width: 35, height: 60 },
+    mechanics: { inversion: true, inversionEvery: 250, inversionDuration: 82, aiDelay: 36, maxAI: 17 },
     platforms: [
       { x: 0, y: 480, width: 1000, height: 40 },
-
-      { x: 120, y: 410, width: 100, height: 20 },
-      { x: 280, y: 350, width: 100, height: 20 },
-      { x: 440, y: 410, width: 100, height: 20 },
-      { x: 600, y: 340, width: 100, height: 20 },
-      { x: 760, y: 400, width: 110, height: 20 },
+      { x: 95, y: 410, width: 88, height: 20 },
+      { x: 220, y: 345, width: 78, height: 20 },
+      { x: 340, y: 405, width: 78, height: 20 },
+      { x: 465, y: 320, width: 78, height: 20 },
+      { x: 590, y: 395, width: 78, height: 20 },
+      { x: 715, y: 315, width: 78, height: 20 },
+      { x: 840, y: 390, width: 78, height: 20 },
     ],
-
     obstacles: [
-      {
-        x: 225,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
-
-      {
-        x: 390,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
-
-      {
-        x: 550,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
-
-      {
-        x: 710,
-        y: 440,
-        width: 40,
-        height: 40,
-        type: "spike",
-      },
+      { x: 180, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 305, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 430, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 555, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 680, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 805, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 915, y: 440, width: 46, height: 40, type: "spike" },
     ],
   },
-
   {
     id: 5,
     name: "PREDICT",
-    difficulty: 5,
-
-    player: {
-      x: 60,
-      y: 420,
-      width: 28,
-      height: 28,
-    },
-
-    exit: {
-      x: 900,
-      y: 420,
-      width: 35,
-      height: 60,
-    },
-
+    difficulty: 10,
+    player: { x: 45, y: 420, width: 28, height: 28 },
+    exit: { x: 945, y: 420, width: 35, height: 60 },
+    mechanics: { prediction: true, aiDelay: 25, maxAI: 22 },
     platforms: [
       { x: 0, y: 480, width: 1000, height: 40 },
-
-      { x: 120, y: 410, width: 110, height: 20 },
-      { x: 290, y: 350, width: 110, height: 20 },
-      { x: 460, y: 400, width: 110, height: 20 },
-      { x: 630, y: 330, width: 110, height: 20 },
-      { x: 790, y: 400, width: 110, height: 20 },
+      { x: 90, y: 405, width: 90, height: 20 },
+      { x: 205, y: 335, width: 80, height: 20 },
+      { x: 315, y: 405, width: 80, height: 20 },
+      { x: 425, y: 315, width: 80, height: 20 },
+      { x: 535, y: 390, width: 80, height: 20 },
+      { x: 645, y: 300, width: 80, height: 20 },
+      { x: 755, y: 385, width: 80, height: 20 },
+      { x: 865, y: 315, width: 80, height: 20 },
     ],
-
-    obstacles: [],
+    obstacles: [
+      { x: 170, y: 440, width: 44, height: 40, type: "spike" },
+      { x: 285, y: 440, width: 44, height: 40, type: "spike" },
+      { x: 395, y: 440, width: 44, height: 40, type: "spike" },
+      { x: 505, y: 440, width: 44, height: 40, type: "spike" },
+      { x: 615, y: 440, width: 44, height: 40, type: "spike" },
+      { x: 725, y: 440, width: 44, height: 40, type: "spike" },
+      { x: 835, y: 440, width: 44, height: 40, type: "spike" },
+    ],
   },
-
   {
     id: 6,
     name: "ESCAPE",
-    difficulty: 6,
-
-    player: {
-      x: 60,
-      y: 420,
-      width: 28,
-      height: 28,
-    },
-
-    exit: {
-      x: 900,
-      y: 420,
-      width: 35,
-      height: 60,
-    },
-
+    difficulty: 11,
+    player: { x: 40, y: 420, width: 28, height: 28 },
+    exit: { x: 945, y: 420, width: 35, height: 60 },
+    mechanics: { hunt: true, inversion: true, prediction: true, shifting: true, aiDelay: 13, maxAI: 32 },
     platforms: [
-      { x: 0, y: 480, width: 1000, height: 40 },
-
-      { x: 110, y: 410, width: 100, height: 20 },
-      { x: 260, y: 350, width: 100, height: 20 },
-      { x: 410, y: 400, width: 100, height: 20 },
-      { x: 560, y: 330, width: 100, height: 20 },
-      { x: 710, y: 400, width: 100, height: 20 },
-      { x: 850, y: 350, width: 100, height: 20 },
+      { x: 0, y: 480, width: 90, height: 40 },
+      { x: 105, y: 400, width: 72, height: 20, moving: true, minX: 80, maxX: 245, speed: 4.8 },
+      { x: 260, y: 325, width: 68, height: 20, moving: true, minX: 225, maxX: 390, speed: 5.2 },
+      { x: 405, y: 395, width: 68, height: 20, moving: true, minX: 370, maxX: 555, speed: 5.5 },
+      { x: 570, y: 300, width: 68, height: 20, moving: true, minX: 535, maxX: 720, speed: 5.8 },
+      { x: 735, y: 380, width: 68, height: 20, moving: true, minX: 700, maxX: 875, speed: 6.0 },
+      { x: 890, y: 400, width: 110, height: 20 },
     ],
-
-    obstacles: [],
+    obstacles: [
+      { x: 82, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 225, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 370, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 535, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 700, y: 440, width: 46, height: 40, type: "spike" },
+      { x: 855, y: 440, width: 46, height: 40, type: "spike" },
+    ],
   },
 ];
