@@ -60,6 +60,8 @@ export default function Game() {
     aiMessageTimer: 0,
     lastAIMsg: "SYSTEM ONLINE",
     deathReason: "ROUTE COMPROMISED",
+    collisionFree: true,
+    uiSyncTimer: 0,
     lastX: 0,
     lastDirection: 0,
     directionChanges: 0,
@@ -79,6 +81,18 @@ export default function Game() {
 
   const [levelTime, setLevelTime] =
     useState(0);
+
+  const [deathReason, setDeathReason] =
+    useState("ROUTE COMPROMISED");
+
+  const [liveStats, setLiveStats] =
+    useState({
+      obstacleCount: 0,
+      aggression: 0,
+      leftMoves: 0,
+      rightMoves: 0,
+      jumps: 0,
+    });
 
   const [bestTime, setBestTime] =
     useState(null);
@@ -110,6 +124,9 @@ export default function Game() {
 
   const [transitionText, setTransitionText] =
     useState("");
+
+  const [transitionReward, setTransitionReward] =
+    useState(false);
 
   const [aiMessage, setAiMessage] =
     useState("SYSTEM ONLINE");
@@ -310,6 +327,8 @@ export default function Game() {
     game.current.aiMessageTimer = 0;
     game.current.lastAIMsg = "SYSTEM ONLINE";
     game.current.deathReason = "ROUTE COMPROMISED";
+    game.current.collisionFree = true;
+    game.current.uiSyncTimer = 0;
     game.current.lastX = level.player.x;
     game.current.lastDirection = 0;
     game.current.directionChanges = 0;
@@ -369,6 +388,15 @@ export default function Game() {
 
     setLevelTime(0);
 
+    setDeathReason("ROUTE COMPROMISED");
+    setLiveStats({
+      obstacleCount: 0,
+      aggression: 0,
+      leftMoves: 0,
+      rightMoves: 0,
+      jumps: 0,
+    });
+
     setBestTime(
       getBestTime(index)
     );
@@ -380,6 +408,7 @@ export default function Game() {
     setScreen("game");
 
     setTransitionText("");
+    setTransitionReward(false);
     setAiMessage(
       index === 0
         ? "SYSTEM ONLINE // OBSERVING"
@@ -452,6 +481,7 @@ export default function Game() {
       14;
 
     game.current.deathReason = reason;
+    setDeathReason(reason);
     setAiMessage(
       reason === "PREDICTION SUCCESSFUL"
         ? "PREDICTION SUCCESSFUL"
@@ -503,6 +533,17 @@ export default function Game() {
       game.current.levelTime
     );
 
+    const earnedBonusLife =
+      game.current.collisionFree;
+
+    if (earnedBonusLife) {
+      game.current.lives += 1;
+      setLives(game.current.lives);
+      setAiMessage("CLEAN RUN // +1 EXTRA LIFE");
+    }
+
+    setTransitionReward(earnedBonusLife);
+
     const next =
       game.current.levelIndex + 1;
 
@@ -547,12 +588,15 @@ export default function Game() {
       LEVELS.length
     ) {
       setTransitionText(
-        "RUN COMPLETE"
+        earnedBonusLife
+          ? "CLEAN RUN // +1 LIFE"
+          : "RUN COMPLETE"
       );
     } else {
       setTransitionText(
-        `LEVEL ${next + 1
-        }`
+        earnedBonusLife
+          ? `+1 LIFE // LEVEL ${next + 1}`
+          : `LEVEL ${next + 1}`
       );
     }
 
@@ -629,6 +673,9 @@ export default function Game() {
     const state = game.current;
     x = Math.max(18, Math.min(WIDTH - width - 18, x));
 
+    // Keep the level 6 spawn zone clear so the hunt cannot trap the player immediately.
+    if (state.levelIndex === 5 && x < 150) return false;
+
     const occupied = state.obstacles.some((o) =>
       o.activated && Math.abs(o.x - x) < Math.max(38, width * 0.7) && Math.abs(o.y - y) < 48
     );
@@ -677,7 +724,7 @@ export default function Game() {
     let width = 44;
     let height = 40;
 
-    if (level >= 5 && typeRoll > 0.68) {
+    if (level >= 5 && level < 6 && typeRoll > 0.68) {
       type = "block";
       y = 360;
       width = 48;
@@ -731,6 +778,21 @@ function update(delta) {
 
   state.levelTime += delta / 60;
   if (Math.floor(state.levelTime * 10) % 3 === 0) setLevelTime(state.levelTime);
+  state.uiSyncTimer += delta;
+  if (state.uiSyncTimer >= 8) {
+    state.uiSyncTimer = 0;
+    setLiveStats({
+      obstacleCount: state.obstacles.filter(
+        (obstacle) => obstacle.activated
+      ).length,
+      aggression: Math.round(
+        (state.aiMemory.aggression || 0) * 100
+      ),
+      leftMoves: Math.round(state.aiMemory.leftMoves || 0),
+      rightMoves: Math.round(state.aiMemory.rightMoves || 0),
+      jumps: state.aiMemory.jumps || 0,
+    });
+  }
   state.mechanicTimer += delta;
 
   // Track direction changes. Repetition is exactly what the AI wants.
@@ -862,7 +924,13 @@ function update(delta) {
     for (const obstacle of state.obstacles) {
       if (!obstacle.ai || !obstacle.aiVelocityX) continue;
       obstacle.x += obstacle.aiVelocityX * delta;
-      if (obstacle.x < 25 || obstacle.x > WIDTH - obstacle.width - 25) obstacle.aiVelocityX *= -1;
+      if (obstacle.x < 150 || obstacle.x > WIDTH - obstacle.width - 25) {
+        obstacle.x = Math.max(
+          150,
+          Math.min(WIDTH - obstacle.width - 25, obstacle.x)
+        );
+        obstacle.aiVelocityX *= -1;
+      }
     }
   }
 
@@ -870,6 +938,7 @@ function update(delta) {
   for (const obstacle of state.obstacles) {
     if (!obstacle.activated) continue;
     if (collision(player, obstacle)) {
+      state.collisionFree = false;
       loseLife(levelNo >= 5 ? "PREDICTION SUCCESSFUL" : levelNo === 3 ? "DECOY TRIGGERED" : "TRAP TRIGGERED");
       return;
     }
@@ -932,11 +1001,11 @@ function update(delta) {
         createAIObstacle(player, predictedPlayerX(player, 24) - player.x);
         if (jumps >= 4 && Math.random() < 0.65) createAIObstacle(player, predictedPlayerX(player, 32) - player.x);
       } else if (levelNo === 6) {
-        // Hunt from ahead and behind. This is deliberately oppressive.
+        // The final sector pressures the route without sealing it with wall traps.
         createAIObstacle(player, state.movementDirection * (125 + Math.random() * 100));
-        createAIObstacle(player, -state.movementDirection * (150 + Math.random() * 110));
-        if (memory.aggression > 0.35) createAIObstacle(player, state.movementDirection * (250 + Math.random() * 120));
-        if (state.controlInverted && Math.random() < 0.7) createAIObstacle(player, -state.movementDirection * 240);
+        if (memory.aggression > 0.65 && player.x > 420) {
+          createAIObstacle(player, state.movementDirection * (260 + Math.random() * 120));
+        }
       }
     }
   }
@@ -1559,6 +1628,12 @@ if (screen === "menu") {
     <main className="game-shell">
       <div className="menu-screen">
         <div className="menu-content">
+          <div className="menu-kicker">
+            <span className="menu-status-dot" />
+            <span>ADAPTIVE SURVIVAL SYSTEM</span>
+            <span className="menu-version">RUN 01</span>
+          </div>
+
           <div className="menu-logo">
             SHIFT
             <span>//</span>
@@ -1566,9 +1641,8 @@ if (screen === "menu") {
           </div>
 
           <p className="menu-description">
-            The level changes when
-            you think you've
-            figured it out.
+            The level changes when you think
+            you've figured it out.
           </p>
 
           <button
@@ -1577,35 +1651,45 @@ if (screen === "menu") {
               startGame
             }
           >
-            Start run
+            <span>Start run</span>
+            <span className="button-arrow">→</span>
           </button>
 
           <div className="menu-controls">
-            <div>
-              <kbd>←</kbd>
-              <kbd>→</kbd>
-              Move
+            <div className="control-item">
+              <span className="control-keys">
+                <kbd>←</kbd>
+                <kbd>→</kbd>
+              </span>
+              <span>MOVE</span>
             </div>
 
-            <div>
+            <div className="control-item">
               <kbd>↑</kbd>
-              Jump
+              <span>JUMP</span>
             </div>
 
-            <div>
+            <div className="control-item">
               <kbd>R</kbd>
-              Restart
+              <span>RESTART</span>
             </div>
 
-            <div>
+            <div className="control-item">
               <kbd>P</kbd>
-              Pause
+              <span>PAUSE</span>
             </div>
           </div>
 
           <div className="level-select">
-            <div className="select-title">
-              Levels
+            <div className="select-heading">
+              <div>
+                <span className="select-eyebrow">ROUTE SELECTION</span>
+                <strong className="select-title">Levels</strong>
+              </div>
+              <span className="level-count">
+                {String(unlocked).padStart(2, "0")}/
+                {String(LEVELS.length).padStart(2, "0")} OPEN
+              </span>
             </div>
 
             <div className="level-buttons">
@@ -1631,10 +1715,12 @@ if (screen === "menu") {
                       className={
                         locked
                           ? "level-button locked"
-                          : "level-button"
+                          : index + 1 === unlocked
+                            ? "level-button current"
+                            : "level-button"
                       }
                     >
-                      <strong>
+                      <strong className="level-number">
                         {String(
                           level.id
                         ).padStart(
@@ -1643,10 +1729,15 @@ if (screen === "menu") {
                         )}
                       </strong>
 
-                      <span>
+                      <span className="level-name">
+                        {level.name}
+                      </span>
+                      <span className="level-state">
                         {locked
                           ? "LOCKED"
-                          : level.name}
+                          : index + 1 === unlocked
+                            ? "READY"
+                            : "OPEN"}
                       </span>
                     </button>
                   );
@@ -1707,22 +1798,36 @@ if (
   screen === "dead"
 ) {
   return (
-    <main className="game-shell">
+    <main className="game-shell outcome-shell outcome-dead">
       <div className="overlay">
-        <div className="overlay-content">
-          <p className="eyebrow">
-            RUN TERMINATED
-          </p>
+        <div className="overlay-content outcome-panel">
+          <div className="outcome-topline">
+            <span className="outcome-eyebrow">
+              <i /> RUN TERMINATED
+            </span>
+            <span>SECTOR {String(levelNumber).padStart(2, "0")} / {String(LEVELS.length).padStart(2, "0")}</span>
+          </div>
 
           <h1>
-            TRY AGAIN.
+            ROUTE
+            <em>LOST.</em>
           </h1>
 
-          <p>
-            {game.current.deathReason || "ROUTE COMPROMISED"}
-            <br />
-            You reached level {levelNumber}.
-          </p>
+          <div className="outcome-signal">
+            <span>FAILURE SIGNAL</span>
+            <strong>{deathReason}</strong>
+          </div>
+
+          <div className="outcome-stats">
+            <div>
+              <span>LAST SECTOR</span>
+              <strong>{String(levelNumber).padStart(2, "0")}</strong>
+            </div>
+            <div>
+              <span>RUN STATUS</span>
+              <strong>TERMINATED</strong>
+            </div>
+          </div>
 
           <button
             className="primary-button"
@@ -1730,8 +1835,13 @@ if (
               restartLevel
             }
           >
-            Retry level
+            <span>Retry level</span>
+            <span className="button-arrow">↻</span>
           </button>
+
+          <p className="outcome-hint">
+            Press <kbd>R</kbd> to reset this sector
+          </p>
         </div>
       </div>
     </main>
@@ -1879,15 +1989,8 @@ const levelUI = [
   },
 ][levelNumber - 1];
 
-const liveState = game.current;
-const liveObstacleCount =
-  liveState.obstacles?.filter(
-    (obstacle) => obstacle.activated
-  ).length || 0;
-
-const liveAggression = Math.round(
-  (liveState.aiMemory?.aggression || 0) * 100
-);
+const liveObstacleCount = liveStats.obstacleCount;
+const liveAggression = liveStats.aggression;
 
 const liveThreat = Math.min(
   100,
@@ -1941,7 +2044,7 @@ return (
           <strong className="life-readout">
             {"●".repeat(lives)}
             <i>
-              {"○".repeat(3 - lives)}
+              {"○".repeat(Math.max(0, 3 - lives))}
             </i>
           </strong>
         </div>
@@ -2004,9 +2107,9 @@ return (
         <div className="behavior-stats">
           <div className="behavior-title">PLAYER PATTERN</div>
           <div className="behavior-grid">
-            <span>LEFT <b>{Math.round(liveState.aiMemory?.leftMoves || 0)}</b></span>
-            <span>RIGHT <b>{Math.round(liveState.aiMemory?.rightMoves || 0)}</b></span>
-            <span>JUMPS <b>{liveState.aiMemory?.jumps || 0}</b></span>
+            <span>LEFT <b>{liveStats.leftMoves}</b></span>
+            <span>RIGHT <b>{liveStats.rightMoves}</b></span>
+            <span>JUMPS <b>{liveStats.jumps}</b></span>
             <span>AGGRESSION <b>{liveAggression}%</b></span>
           </div>
         </div>
@@ -2039,7 +2142,11 @@ return (
           </div>
 
           {transitionText && (
-            <div className="level-transition">
+            <div
+              className={`level-transition${
+                transitionReward ? " reward" : ""
+              }`}
+            >
               {transitionText}
             </div>
           )}
@@ -2048,7 +2155,7 @@ return (
         <div className="playfield-foot">
           <span>{levelUI.rule}</span>
           <span>
-            ROUTE {levelNumber}/6
+            ROUTE {levelNumber}/{LEVELS.length}
           </span>
         </div>
       </section>
@@ -2057,7 +2164,8 @@ return (
         <div className="block-topline">
           <span>02 / MISSION</span>
           <span>
-            {String(levelNumber).padStart(2, "0")}/06
+            {String(levelNumber).padStart(2, "0")}/
+            {String(LEVELS.length).padStart(2, "0")}
           </span>
         </div>
 
@@ -2130,33 +2238,45 @@ return (
 
     <div className="mobile-controls">
       <button
+        type="button"
+        aria-label="Move left"
         onPointerDown={() => press("left")}
         onPointerUp={() => release("left")}
+        onPointerCancel={() => release("left")}
         onPointerLeave={() => release("left")}
       >
         ←
       </button>
 
       <button
+        type="button"
+        aria-label="Drop down"
         onPointerDown={() => press("down")}
         onPointerUp={() => release("down")}
+        onPointerCancel={() => release("down")}
         onPointerLeave={() => release("down")}
       >
         ↓
       </button>
 
       <button
+        type="button"
+        aria-label="Jump"
         className="jump-control"
         onPointerDown={() => press("up")}
         onPointerUp={() => release("up")}
+        onPointerCancel={() => release("up")}
         onPointerLeave={() => release("up")}
       >
         ↑
       </button>
 
       <button
+        type="button"
+        aria-label="Move right"
         onPointerDown={() => press("right")}
         onPointerUp={() => release("right")}
+        onPointerCancel={() => release("right")}
         onPointerLeave={() => release("right")}
       >
         →
