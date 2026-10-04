@@ -382,6 +382,24 @@ export function chooseBestTrap(
       continue;
     }
 
+    // NEVER spawn on or near the exit / finish box.
+    if (exit) {
+      if (trap.x + trap.width >= exit.x - 75) {
+        continue;
+      }
+      if (
+        Math.abs(trap.x - exit.x) < 95 &&
+        Math.abs(trap.y - exit.y) < 95
+      ) {
+        continue;
+      }
+    }
+
+    // Keep safe starting zone clear.
+    if (trap.x < 150) {
+      continue;
+    }
+
     // Don't stack on an existing obstacle.
     const occupied =
       obstacles.some(

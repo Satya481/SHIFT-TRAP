@@ -16,7 +16,7 @@ export function generateAIObstacle(
 
   const x = Math.min(
     player.x + distanceAhead,
-    900
+    840
   );
 
   const types = [

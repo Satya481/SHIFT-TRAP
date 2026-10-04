@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Space+Grotesk:wght@600;700;800&display=swap');
 
 * {
   box-sizing: border-box;
@@ -1139,3 +1140,293 @@ body {
     font-size: 52px;
   }
 }
+
+/* Secondary & Action Buttons */
+.menu-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.secondary-button {
+  min-width: 170px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 13px 15px;
+  border: 1px solid rgba(244, 240, 232, 0.22);
+  background: #191b21;
+  color: #f4f0e8;
+  cursor: pointer;
+  font: 800 11px "IBM Plex Sans", sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: all .18s ease;
+}
+
+.secondary-button:hover {
+  background: #252932;
+  border-color: #7cff6b;
+  color: #7cff6b;
+  transform: translateY(-2px);
+}
+
+.pause-actions,
+.death-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Gear & Config Buttons */
+.gear-btn {
+  background: transparent;
+  border: 1px solid rgba(244, 240, 232, 0.15);
+  color: #969ba6;
+  font: 700 9px "IBM Plex Sans", sans-serif;
+  padding: 3px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.gear-btn:hover {
+  border-color: #f4f0e8;
+  color: #f4f0e8;
+}
+
+.mini-gear-btn {
+  background: transparent;
+  border: 1px solid rgba(244, 240, 232, 0.12);
+  color: #969ba6;
+  font-size: 14px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mini-gear-btn:hover {
+  color: #7cff6b;
+  border-color: #7cff6b;
+}
+
+.gamepad-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: rgba(124, 255, 107, 0.1);
+  border: 1px solid #7cff6b;
+  color: #7cff6b;
+  font: 700 9px "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.1em;
+}
+
+.endless-banner {
+  margin-top: 18px;
+  padding: 10px 14px;
+  background: rgba(255, 77, 61, 0.08);
+  border-left: 3px solid #ff4d3d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.endless-banner span {
+  color: #969ba6;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.endless-banner strong {
+  color: #ff4d3d;
+  font: 800 13px "Space Grotesk", sans-serif;
+}
+
+/* Level Button Extras */
+.level-btn-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.medal-icon {
+  font-size: 13px;
+}
+
+.clean-star {
+  color: #ffd700;
+  font-size: 12px;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+}
+
+/* Dash Meter Card */
+.dash-meter-card {
+  padding: 14px 0;
+  border-top: 1px solid rgba(244, 240, 232, 0.07);
+}
+
+/* Boss Terminals Card */
+.boss-terminals-card {
+  margin-top: 16px;
+  padding: 12px;
+  background: #101114;
+  border: 1px solid rgba(255, 77, 61, 0.3);
+}
+
+.boss-terminals-card span {
+  display: block;
+  font: 700 9px "IBM Plex Sans", sans-serif;
+  color: #ff4d3d;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.terminals-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.term-badge {
+  padding: 5px;
+  text-align: center;
+  font: 800 9px "Space Grotesk", sans-serif;
+  border: 1px solid;
+}
+
+.term-badge.armed {
+  background: rgba(255, 77, 61, 0.1);
+  border-color: #ff4d3d;
+  color: #ff4d3d;
+}
+
+.term-badge.offline {
+  background: rgba(124, 255, 107, 0.1);
+  border-color: #7cff6b;
+  color: #7cff6b;
+}
+
+/* Mobile Controls with Dash */
+.mobile-controls {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+.mobile-controls .dash-control {
+  border-top-color: #56b4f5 !important;
+  background: #17202a !important;
+  color: #56b4f5 !important;
+}
+
+.mobile-controls .dash-control.cooling {
+  opacity: 0.45;
+}
+
+/* Settings Modal */
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.settings-modal {
+  width: min(100%, 460px);
+  background: #15171b;
+  border: 1px solid rgba(244, 240, 232, 0.2);
+  border-top: 3px solid #7cff6b;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: grid;
+  gap: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(244, 240, 232, 0.1);
+  padding-bottom: 12px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font: 800 16px "Space Grotesk", sans-serif;
+  color: #f4f0e8;
+  letter-spacing: 0.05em;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #969ba6;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #ff4d3d;
+}
+
+.settings-group {
+  display: grid;
+  gap: 12px;
+}
+
+.settings-group label {
+  font: 700 9px "IBM Plex Sans", sans-serif;
+  color: #7cff6b;
+  letter-spacing: 0.14em;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #969ba6;
+}
+
+.setting-slider {
+  display: grid;
+  gap: 6px;
+  font-size: 10px;
+  color: #969ba6;
+}
+
+.setting-slider input[type="range"] {
+  accent-color: #7cff6b;
+  cursor: pointer;
+}
+
+.toggle-btn {
+  padding: 5px 12px;
+  background: #1e2229;
+  border: 1px solid #34373e;
+  color: #969ba6;
+  font: 700 10px "Space Grotesk", sans-serif;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toggle-btn.active {
+  background: rgba(124, 255, 107, 0.15);
+  border-color: #7cff6b;
+  color: #7cff6b;
+}
+
+.full-width {
+  width: 100%;
+  justify-content: center;
+}
+
